@@ -943,9 +943,9 @@ endif
 # Lua
 ifeq ($(WINDOWS_BUILD),1)
   ifeq ($(TARGET_BITS), 32)
-    LDFLAGS += -Llib/lua/win32 -l:liblua53.a
+    LDFLAGS += -Llib/lua/win32 -l:liblua53.a -ldnsapi
   else
-    LDFLAGS += -Llib/lua/win64 -l:liblua53.a
+    LDFLAGS += -Llib/lua/win64 -l:liblua53.a -ldnsapi
   endif
 else ifeq ($(OSX_BUILD),1)
   ifeq ($(shell uname -m),arm64)
@@ -955,14 +955,14 @@ else ifeq ($(OSX_BUILD),1)
   endif
 else ifeq ($(TARGET_RPI),1)
 	ifneq (,$(findstring aarch64,$(machine)))
-    LDFLAGS += -Llib/lua/linux -l:liblua53-arm64.a
+    LDFLAGS += -Llib/lua/linux -l:liblua53-arm64.a -lresolv
   else
-    LDFLAGS += -Llib/lua/linux -l:liblua53-arm.a
+    LDFLAGS += -Llib/lua/linux -l:liblua53-arm.a -lresolv
   endif
 else ifeq ($(TARGET_RK3588),1)
-  LDFLAGS += -Llib/lua/linux -l:liblua53-arm64.a
+  LDFLAGS += -Llib/lua/linux -l:liblua53-arm64.a -lresolv
 else
-  LDFLAGS += -Llib/lua/linux -l:liblua53.a -ldl
+  LDFLAGS += -Llib/lua/linux -l:liblua53.a -ldl -lresolv
 endif
 
 # CoopNet
@@ -999,7 +999,7 @@ endif
 
 # Network/Discord (ugh, needs cleanup)
 ifeq ($(WINDOWS_BUILD),1)
-  LDFLAGS += -lws2_32 -lwsock32 -ldnsapi
+  LDFLAGS += -lws2_32 -lwsock32
   ifeq ($(DISCORD_SDK),1)
     LDFLAGS += -Wl,-Bdynamic -L./lib/discordsdk/ -ldiscord_game_sdk -Wl,-Bstatic
   endif
